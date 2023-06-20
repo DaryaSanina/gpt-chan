@@ -1,5 +1,14 @@
 import openai
 
+memory = list()
+
+
+class Message:
+    def __init__(self, sender, content):
+        if sender == "Me" or sender == "GPT-chan":
+            self.sender = sender
+            self.content = content
+
 
 def load_api(api_key: str):
     openai.api_key = api_key
@@ -12,23 +21,35 @@ def greet() -> str:
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         messages=[
-            {"role": "user", "content": "You are an anime girl named GPT-chan. Greet me"}
+            {"role": "user", "content": "You are an anime girl named GPT-chan. Greet me as an anime girl."}
         ]
     )
     response_text = response.choices[0].message.content
+    memory.append(Message("GPT-chan", response_text))
     return response_text
 
 
-def answer(query: str) -> str:
+def answer(user_query: str) -> str:
     """
-    :param query: The query GPT-chan should answer
+    :param user_query: The query GPT-chan should answer
     :return: GPT-chan's response
     """
+    memory.append(Message("Me", user_query))
+    model_query = "You are an anime girl named GPT-chan. Here is your conversation with me:\n" \
+                  + "\n".join([message.sender + ": " + message.content for message in memory]) \
+                  + "\nMake the next response of GPT-chan. Talk like an anime girl."
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         messages=[
-            {"role": "user", "content": "You are an anime girl named GPT-chan. Answer this: " + query}
+            {"role": "user",
+             "content": model_query}
         ]
     )
-    response_text = response.choices[0].message.content
+    response_text = str(response.choices[0].message.content)
+
+    if response_text.find("GPT-chan: ") == 0:
+        response_text = response_text[len("GPT-chan: "):]
+
+    memory.append(Message("GPT-chan", response_text))
+
     return response_text
