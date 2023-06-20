@@ -1,6 +1,4 @@
 from elevenlabslib import *
-import sounddevice as sd
-import soundfile as sf
 
 user = None
 voice = None
@@ -14,13 +12,11 @@ def load_api(api_key: str, voice_name: str):
     voice.generate_audio_bytes('text', 0.75)
 
 
-def play(text: str):
+def generate_sound(text: str):
     if type(voice) == ElevenLabsVoice:
         bytes_data = voice.generate_audio_bytes(text)
         update_audio_file(bytes_data)
-        data, fs = sf.read(AUDIO_RESPONSE_FILENAME, dtype='float32')
-        sd.play(data, fs)
-        status = sd.wait()
+    return AUDIO_RESPONSE_FILENAME
 
 
 def update_audio_file(bytes_sound):
