@@ -1,24 +1,19 @@
-from elevenlabslib import *
+from elevenlabs.client import ElevenLabs
+from elevenlabs import save
 
-user = None
-voice = None
 AUDIO_RESPONSE_FILENAME = 'media/audio/audio_response.wav'
+
+client = None
+voice = None
 
 
 def load_api(api_key: str, voice_name: str):
-    global user, voice
-    user = ElevenLabsUser(api_key)
-    voice = user.get_voices_by_name(voice_name)[0]
-    voice.generate_audio_bytes('text', 0.75)
+    global client, voice
+    client = ElevenLabs(api_key=api_key)
+    voice = voice_name
 
 
 def generate_sound(text: str):
-    if type(voice) == ElevenLabsVoice:
-        bytes_data = voice.generate_audio_bytes(text)
-        update_audio_file(bytes_data)
+    audio = client.generate(text=text, voice=voice, model="eleven_multilingual_v2")
+    save(audio, AUDIO_RESPONSE_FILENAME)
     return AUDIO_RESPONSE_FILENAME
-
-
-def update_audio_file(bytes_sound):
-    with open(AUDIO_RESPONSE_FILENAME, mode='wb') as f:
-        f.write(bytes_sound)

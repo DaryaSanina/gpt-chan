@@ -4,7 +4,7 @@ import os
 import sys
 
 import gpt_queries
-import voice_input
+#import voice_input
 import text_to_speech
 import telegram_bot
 
@@ -26,7 +26,7 @@ else:
 if __name__ == '__main__':
     gpt_queries.load_api(OPENAI_API_KEY)  # Load the OpenAI API key
 
-    text_to_speech.load_api(ELEVEN_LABS_API_KEY, 'Domi')  # Load the ElevenLabs API key
+    text_to_speech.load_api(ELEVEN_LABS_API_KEY, 'Gigi')  # Load the ElevenLabs API key
 
     # Build the Telegram app
     telegram_app = ApplicationBuilder().token(TELEGRAM_BOT_TOKEN).build()

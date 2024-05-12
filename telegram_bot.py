@@ -1,6 +1,8 @@
 from telegram import Update
 from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler
 
+from pathlib import Path
+
 import gpt_queries
 import text_to_speech
 
